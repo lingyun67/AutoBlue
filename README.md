@@ -1,4 +1,4 @@
-# AutoBlue
+![image](https://github.com/lingyun67/AutoBlue/assets/64645371/e28b1254-6486-42a0-8995-331c5a6bb6a3)![image](https://github.com/lingyun67/AutoBlue/assets/64645371/153ea940-2a69-4419-b43f-adabc2fe67fa)# AutoBlue
 
 一个普普通通的挂机脚本，使用了色块识别、模拟手柄输入、模拟鼠标输入的第三方库
 
@@ -72,14 +72,19 @@ py main.py
 
 ## 挂机地点推荐
 
-1-5级：在第一张野外地图随便挂挂
+### 1-5级：在第一张野外地图随便挂挂
+其实直接跟着主线一小会就5级了，然后就可以进自由探索了
 
-3-14级 自由探索门口
-
+### 3-14级 自由探索门口
+无敌点位，不会受到伤害
 ![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/3-14.png)
 
+### 11-21级 巡礼者的休息地
+这里找块石头可以无伤打狼，效率估计不如哥布林营地
+![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/11-21.png)
 
-14-22级 哥布林营地
+### 14-22级 哥布林营地
+没啥能避免伤害的地方，但是人相当多，所以其实没啥，但是会刷恶名精英，为了练级而来自然会被这个紫名的玩意卡住视角，等他死了就没影响了
 ![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/14-22.png)
 
 ## 较复杂功能实现
