@@ -15,7 +15,7 @@ pip install -r requirements.txt
 第一次使用之前，你需要进行本机适配。
 
 你需要获取你的客户端的血条的坐标，下载抓抓工具
-[https://wwuh.lanzout.com/iAItC115cv2d]https://wwuh.lanzout.com/iAItC115cv2d
+https://wwuh.lanzout.com/iAItC115cv2d
 打开抓抓工具之后，随便找一个怪，将鼠标瞄准在它血条的最左边但再往右留几格像素，并且要求瞄准的那颗像素点尽量在血条的垂直中心。此时按下ctrl+alt+1，抓抓工具会显示你获取到的这个位置的坐标。
 
 再用同样方法获取你自己的血条的坐标，此时不是最左边了，大概在你血条80%的位置即可。（v.0.2-Alpha-v2版本及以后若不使用弓箭手可以不设置血条坐标）
