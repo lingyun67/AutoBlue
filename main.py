@@ -1,10 +1,12 @@
 import time
-import vgamepad as vg
-from PIL import ImageGrab
 import math
+import vgamepad as vg
 import pyautogui
 import logging
 import datetime
+from PIL import ImageGrab
+from window_utils import calculate_target_coordinates
+from window_utils import apply_window_scale
 
 art = """
 ______          _     ______                 _       _
@@ -14,7 +16,6 @@ ______          _     ______                 _       _
 | | | |_| | (__|   <  | |_/ / (_| | | | | (_| | (_| | |
 \_|  \__,_|\___|_|\_\ \____/ \__,_|_| |_|\__,_|\__,_|_|
 """
-
 
 
 def get_pixel_color(x, y):
@@ -36,7 +37,8 @@ def colors_approx_equal(color1, color2, tolerance):
         return False
 
 
-def simulate_combat(gamepad, target_x, target_y, target_color, hp_x, hp_y, hp_color, color_tolerance, timeout):
+def simulate_combat(gamepad, target_x, target_y, target_color, hp_x, hp_y, hp_color, color_tolerance, timeout,
+                    target_window_pianyi_original, x_original_value, y_original_value):
     # 模拟战斗的方法
     logging.info("开始战斗")
 
@@ -46,7 +48,13 @@ def simulate_combat(gamepad, target_x, target_y, target_color, hp_x, hp_y, hp_co
     start_time = time.time()  # 记录开始时间
 
     # 正在瞄准敌人 and HP血量不低
-    while colors_approx_equal(get_pixel_color(target_x, target_y), target_color, color_tolerance) and (not colors_approx_equal(get_pixel_color(hp_x, hp_y), hp_color, color_tolerance - 4)):
+    while (colors_approx_equal(get_pixel_color(target_x, target_y), target_color, color_tolerance)
+           or colors_approx_equal(get_pixel_color(target_x, target_y + 29), target_color, color_tolerance)
+           or colors_approx_equal(get_pixel_color(target_x, target_y +
+                                                            (apply_window_scale(target_window_pianyi_original,
+                                                                                x_original_value, y_original_value))),
+                                  target_color, color_tolerance)) \
+            and (not colors_approx_equal(get_pixel_color(hp_x, hp_y), hp_color, color_tolerance - 4)):
         elapsed_time = time.time() - start_time  # 计算已经过去的时间
         if elapsed_time > timeout:  # 如果已经过去的时间超过timeout秒
             find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance)  # 强制寻找敌人
@@ -54,7 +62,8 @@ def simulate_combat(gamepad, target_x, target_y, target_color, hp_x, hp_y, hp_co
         kill(gamepad)
 
 
-def find_enemy(gamepad, target_x, target_y, target_color, color_tolerance, timeout):
+def find_enemy(gamepad, target_x, target_y, target_color, color_tolerance,
+               timeout, target_window_pianyi_original, x_original_value, y_original_value):
     # 寻找敌方怪物的方法
     logging.info("开始寻找敌怪")
 
@@ -67,7 +76,13 @@ def find_enemy(gamepad, target_x, target_y, target_color, color_tolerance, timeo
     gamepad.right_joystick(x_value=15000, y_value=0)
     gamepad.update()
 
-    while not colors_approx_equal(get_pixel_color(target_x, target_y), target_color, color_tolerance):
+    while not (colors_approx_equal(get_pixel_color(target_x, target_y), target_color, color_tolerance)
+               or colors_approx_equal(get_pixel_color(target_x, target_y + 29), target_color, color_tolerance)
+               or colors_approx_equal(get_pixel_color(target_x, target_y +
+                                                                 (apply_window_scale(target_window_pianyi_original,
+                                                                                     x_original_value,
+                                                                                     y_original_value))), target_color,
+                                       color_tolerance)):
         elapsed_time = time.time() - start_time  # 计算已经过去的时间
         if elapsed_time > timeout:  # 如果已经过去的时间超过timeout秒
             reset_viewpoint(gamepad)
@@ -332,12 +347,16 @@ def main():
 
     target_color = (247, 1, 0)  # 敌人 当前目标颜色
     hp_color = (51, 51, 51)  # 血条的背景板的颜色
-    target_x = 821
-    target_y = 61
+    x_original_value = 821
+    y_original_value = 61
     hp_x = 831
     hp_y = 1045
     color_tolerance = 10  # 颜色误差容忍范围
     timeout = 30  # 战斗超时时间
+    target_window_pianyi_original = 7
+
+    # 定义窗口标题和原始坐标值
+    window_title = "BLUE PROTOCOL  "  # 窗口标题
 
     gamepad = vg.VX360Gamepad()
 
@@ -349,15 +368,32 @@ def main():
             logging.info("匹配到低于目标血量")
             regain_health(gamepad, hp_x, hp_y, hp_color, color_tolerance)
         else:
-            if colors_approx_equal(get_pixel_color(target_x, target_y), target_color, color_tolerance):
+            # 前面是正常的位置，后面or y+7是有buff会向下移动7*缩放比例像素
+            target_x, target_y = calculate_target_coordinates(window_title, x_original_value, y_original_value)
+            if colors_approx_equal(get_pixel_color(target_x, target_y), target_color, color_tolerance) \
+                    or colors_approx_equal(get_pixel_color(target_x,
+                                                           target_y + apply_window_scale(target_window_pianyi_original,
+                                                                                         x_original_value,
+                                                                                         y_original_value)),
+                                           target_color, color_tolerance) \
+                    or colors_approx_equal(get_pixel_color(target_x, target_y + 29), target_color, color_tolerance) \
+                    or colors_approx_equal(get_pixel_color(target_x,
+                                                           target_y + 29 + apply_window_scale(
+                                                               target_window_pianyi_original,
+                                                               x_original_value,
+                                                               y_original_value)),
+                                           target_color, color_tolerance):
                 logging.info("匹配到相关颜色")
-                simulate_combat(gamepad, target_x, target_y, target_color, hp_x, hp_y, hp_color, color_tolerance, timeout)
+                simulate_combat(gamepad, target_x, target_y, target_color, hp_x, hp_y, hp_color, color_tolerance,
+                                timeout, target_window_pianyi_original, x_original_value, y_original_value)
                 logging.info("战斗结束")
             else:
                 logging.info("颜色不匹配")
-                find_enemy(gamepad, target_x, target_y, target_color, color_tolerance, timeout)
+                find_enemy(gamepad, target_x, target_y, target_color, color_tolerance,
+                           timeout, target_window_pianyi_original, x_original_value, y_original_value)
                 logging.info("寻找怪物结束")
-                time.sleep(0.3)  # 等待一段时间后继续检测
+            time.sleep(0.3)  # 等待一段时间后继续检测
+
 
 if __name__ == '__main__':
     main()
