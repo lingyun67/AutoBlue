@@ -23,12 +23,12 @@ pip install -r requirements.txt
 打开本项目的main.py，找到这段：（下版本会加config文件的.....）
 
 ```python
-target_x = 821
-target_y = 61
-hp_x = 831
-hp_y = 1045
+    x_original_value = 821
+    y_original_value = 61
+    hp_x = 831
+    hp_y = 1045
 ```
-将你刚刚获取到的坐标，如821,61分别修改到target_x与target_y中。
+将你刚刚获取到的坐标，如821,61分别修改到x_original_value与y_original_value中。
 
 默认情况下，第三个3主动技能和第二个战斗幻想和右键作为生命恢复手段，如果不想更改代码请更改游戏内技能位置。
 
