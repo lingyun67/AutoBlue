@@ -1,4 +1,4 @@
-![image](https://github.com/lingyun67/AutoBlue/assets/64645371/e28b1254-6486-42a0-8995-331c5a6bb6a3)![image](https://github.com/lingyun67/AutoBlue/assets/64645371/153ea940-2a69-4419-b43f-adabc2fe67fa)# AutoBlue
+# AutoBlue
 
 一个普普通通的挂机脚本，使用了色块识别、模拟手柄输入、模拟鼠标输入的第三方库
 
