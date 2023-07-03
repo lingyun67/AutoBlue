@@ -21,6 +21,7 @@ pip install -r requirements.txt
 再用同样方法获取你自己的血条的坐标，此时不是最左边了，大概在你血条80%的位置即可。（不使用弓箭手可以不设置血条坐标，因为设了也没用）
 
 打开config.ini，该文件的默认值如下：
+
 ```
 [General]
 # 敌人 当前目标颜色
@@ -60,13 +61,26 @@ py main.py
 - 使用vgamepad库进行手柄模拟输入，使用pyautogui库进行鼠标滚轮的输入
 - 只要按照16:9的比例缩放窗口，无论窗口放在任意位置，在经过最多30s的时间后都能重新定位血条位置
 
+## 注意事项
+
+- 默认循环下会向下滚鼠标滚轮，因为万代不允许使用手柄进行目标切换
+- 在“已连接任意一个手柄”的情况下开启脚本会导致脚本无法生效，因为游戏只能被一个手柄控制
+
 ## 自定义设置
 
 待补充
 
 ## 挂机地点推荐
 
-待补充
+1-5级：在第一张野外地图随便挂挂
+
+3-14级 自由探索门口
+
+![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/3-14.png)
+
+
+14-22级 哥布林营地
+![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/14-22.png)
 
 ## 较复杂功能实现
 
