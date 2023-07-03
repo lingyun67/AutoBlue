@@ -20,7 +20,7 @@ https://wwuh.lanzout.com/iAItC115cv2d
 
 再用同样方法获取你自己的血条的坐标，此时不是最左边了，大概在你血条80%的位置即可。（v.0.2-Alpha-v2版本及以后若不使用弓箭手可以不设置血条坐标）
 
-打开本项目的main.py，找到这段：
+打开本项目的main.py，找到这段：（下版本会加config文件的.....）
 
 ```python
 target_x = 821
