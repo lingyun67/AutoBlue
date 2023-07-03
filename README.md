@@ -20,14 +20,25 @@ pip install -r requirements.txt
 
 再用同样方法获取你自己的血条的坐标，此时不是最左边了，大概在你血条80%的位置即可。（v.0.2-Alpha-v2版本及以后若不使用弓箭手可以不设置血条坐标）
 
-打开本项目的main.py，找到这段：（下版本会加config文件的.....）
-
-```python
-    x_original_value = 821
-    y_original_value = 61
-    hp_x = 831
-    hp_y = 1045
+打开config.ini，该文件的默认值如下：
 ```
+[General]
+# 敌人 当前目标颜色
+target_color = 247, 1, 0
+# 血条的背景板的颜色
+hp_color = 51, 51, 51
+x_original_value = 821
+y_original_value = 61
+hp_x = 831
+hp_y = 1045
+# 颜色误差容忍范围
+color_tolerance = 10
+# 战斗超时时间
+timeout = 30
+# buff导致血条移动像素数
+target_window_pianyi_original = 7
+```
+
 将你刚刚获取到的坐标，如821,61分别修改到x_original_value与y_original_value中。
 
 默认情况下，第三个3主动技能和第二个战斗幻想和右键作为生命恢复手段，如果不想更改代码请更改游戏内技能位置。
