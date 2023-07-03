@@ -4,6 +4,8 @@ import vgamepad as vg
 import pyautogui
 import logging
 import datetime
+import os
+import configparser
 from PIL import ImageGrab
 from window_utils import calculate_target_coordinates
 from window_utils import apply_window_scale
@@ -325,7 +327,12 @@ def main():
 
     # 生成带有日期和时间的日志文件名
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_filename = f"logfile_{current_time}.log"
+    log_folder = "log"
+    log_filename = f"{log_folder}/logfile_{current_time}.log"
+
+    # 创建 log 文件夹
+    if not os.path.exists(log_folder):
+        os.makedirs(log_folder)
 
     # 配置日志记录器
     logging.basicConfig(filename=log_filename, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -345,15 +352,18 @@ def main():
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
-    target_color = (247, 1, 0)  # 敌人 当前目标颜色
-    hp_color = (51, 51, 51)  # 血条的背景板的颜色
-    x_original_value = 821
-    y_original_value = 61
-    hp_x = 831
-    hp_y = 1045
-    color_tolerance = 10  # 颜色误差容忍范围
-    timeout = 30  # 战斗超时时间
-    target_window_pianyi_original = 7
+    # 读取配置文件
+    config = configparser.ConfigParser()
+    config.read('config.ini', encoding='UTF-8')
+    target_color = tuple(map(int, config['General']['target_color'].split(',')))  # 敌人 当前目标颜色
+    hp_color = tuple(map(int, config['General']['hp_color'].split(',')))  # 血条的背景板的颜色
+    x_original_value = int(config['General']['x_original_value'])
+    y_original_value = int(config['General']['y_original_value'])
+    hp_x = int(config['General']['hp_x'])
+    hp_y = int(config['General']['hp_y'])
+    color_tolerance = int(config['General']['color_tolerance'])  # 颜色误差容忍范围
+    timeout = int(config['General']['timeout'])  # 战斗超时时间
+    target_window_pianyi_original = int(config['General']['target_window_pianyi_original'])  # buff导致血条移动像素数
 
     # 定义窗口标题和原始坐标值
     window_title = "BLUE PROTOCOL  "  # 窗口标题
