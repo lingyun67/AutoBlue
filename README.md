@@ -47,6 +47,7 @@ py main.py
 - 旋转搜索时可能因为视角过于诡异导致转了很多圈也搜不到敌人，现将会在设定的时间经过之后重置视角
 - 血量过低的时候自动进入血量回复循环（仅限弓箭手）
 - 使用vgamepad库进行手柄模拟输入，使用pyautogui库进行鼠标滚轮的输入
+- 只要按照16:9的比例缩放窗口，无论窗口放在任意位置，在经过最多30s的时间后都能重新定位血条位置
 
 ## 自定义设置
 
@@ -55,6 +56,21 @@ py main.py
 ## 挂机地点推荐
 
 待补充
+
+## 较复杂功能实现
+
+方法get_target_health_bar_coordinates：
+
+如果在1080p的全屏模式下有一个红色的像素在821,61的坐标，这个坐标的xy轴的变量名为x_original_value与y_original_value。
+
+当调用这个get_target_health_bar_coordinates方法的时候会调用现有的get_window_coordinates方法，get_window_coordinates会返回窗口的四个数据：window_left, window_top, window_width, window_height，这四个数据代表窗口左上角的 x 坐标、窗口左上角的 y 坐标、窗口的宽度和窗口的高度。
+
+get_target_health_bar_coordinates方法在获得了这四个数据之后，会用窗口的宽度除以屏幕的宽度，用窗口的高度除以屏幕的高度，这样就得到了缩小的比例。
+
+然后再用红色的像素之前的名为x_original_value与y_original_value的坐标变量乘以该比例，再加到缩小后的窗口的左上角的坐标上，这样就完成了该红色像素点的重新定位。
+
+后续：get_target_health_bar_coordinates方法被拆分为get_scaling_factors方法与calculate_target_coordinates方法，前者用来获取比例，后者用来获取具体坐标
+
 
 ## 更新日志
 
