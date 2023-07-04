@@ -2,7 +2,7 @@
 
 A simple auto-farming script that utilizes third-party libraries for color detection, simulated joystick input, and simulated mouse input.
 
-[简体中文](README.zh-CN.md) ｜ [English](README.md)
+[简体中文](README.zh-CN.md) | [English](README.md) | [日本語](README.jp.md)
 
 ## Getting Started
 
