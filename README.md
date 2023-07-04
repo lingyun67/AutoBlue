@@ -2,6 +2,8 @@
 
 A simple auto-farming script that utilizes third-party libraries for color detection, simulated joystick input, and simulated mouse input.
 
+[简体中文](README.zh-CN.md) ｜ [English](README.md)
+
 ## Getting Started
 
 Download this project to your local machine and navigate to the project folder. Then run the following command:
