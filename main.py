@@ -192,7 +192,7 @@ def autoTeamMatching(window_title):
     time.sleep(0.1)
     # 再次按下ESC键
     pyautogui.press('esc')
-    time.sleep(1)
+    time.sleep(3)
 
 
 # 战斗循环相关：
@@ -410,7 +410,7 @@ def main():
             regain_health(gamepad, hp_target_x, hp_target_y, hp_color, color_tolerance)
         # 启动了(自动匹配)且(没有队友或没在匹配队友状态)
         if teamMatchingEnabled == 1 and not( colors_approx_equal(get_pixel_color(teammateHealthBarX_target, teammateHealthBarY_target), teammateHealthBarColor, color_tolerance - 4) or colors_approx_equal(get_pixel_color(matchingStatusX_target, matchingStatusY_target), matchingStatusColor, color_tolerance)):
-            #print(teammateHealthBarX_target,teammateHealthBarY_target,teammateHealthBarColor,matchingStatusX_target, matchingStatusY_target, matchingStatusColor)
+            # print(teammateHealthBarX_target,teammateHealthBarY_target,teammateHealthBarColor,matchingStatusX_target, matchingStatusY_target, matchingStatusColor)
             autoTeamMatching(window_title)
         else:
             # 前面是正常的位置，后面or y+7是有buff会向下移动7*缩放比例像素

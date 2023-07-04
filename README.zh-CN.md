@@ -26,20 +26,36 @@ pip install -r requirements.txt
 
 ```
 [General]
-# 敌人 当前目标颜色
+# 敌人 当前目标颜色，计算时会约等于该rgb值，计算结果受color_tolerance数值影响
 target_color = 247, 1, 0
 # 血条的背景板的颜色
 hp_color = 51, 51, 51
+# 目标敌人血条最左侧坐标
 x_original_value = 821
 y_original_value = 61
+# 玩家血条坐标，推荐设置为80%处
 hp_x = 831
 hp_y = 1045
+# 匹配标识坐标
+matchingStatusX = 1737
+matchingStatusY = 12
+# 匹配状态的颜色
+matchingStatusColor = 0, 208, 255
+# 第一名队友血条坐标
+teammateHealthBarX = 106
+teammateHealthBarY = 822
+# 队友血条颜色
+teammateHealthBarColor = 41, 255, 167
 # 颜色误差容忍范围
 color_tolerance = 10
 # 战斗超时时间
 timeout = 30
 # buff导致血条移动像素数
 target_window_pianyi_original = 7
+# 是否360°旋转视角
+autoRotateEnemySearch = 1
+# 是否自动匹配同地图队友
+teamMatchingEnabled = 1
 ```
 
 将你刚刚获取到的坐标，如821,61分别修改到x_original_value与y_original_value中。
@@ -62,11 +78,15 @@ py main.py
 - 血量过低的时候自动进入血量回复循环（仅限弓箭手）
 - 使用vgamepad库进行手柄模拟输入，使用pyautogui库进行鼠标滚轮的输入
 - 只要按照16:9的比例缩放窗口，无论窗口放在任意位置，在经过最多30s的时间后都能重新定位血条位置
+- 启动了(自动匹配)且(没有队友或没在匹配队友状态)的情况下会ESC-移动鼠标-点击-ESC以匹配队友
+- 
 
 ## 注意事项
 
 - 默认循环下会向下滚鼠标滚轮，因为万代不允许使用手柄进行目标切换
 - 在“已连接任意一个手柄”的情况下开启脚本会导致脚本无法生效，因为游戏只能被一个手柄控制
+- 自动匹配功能启动的情况下请不要遮挡队友的血条和右上角的匹配状态显示
+- 你可以选择关闭自动旋转视角以搜索敌人，"或许"会提升效率（
 
 ## 自定义设置
 
