@@ -2,7 +2,7 @@
 
 一个普普通通的挂机脚本，使用了色块识别、模拟手柄输入、模拟鼠标输入的第三方库
 
-[简体中文](README.zh-CN.md) ｜ [English](README.md)
+[简体中文](README.zh-CN.md) | [English](README.md) | [日本語](README.jp.md)
 
 ## 开始使用
 
