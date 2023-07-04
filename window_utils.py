@@ -22,7 +22,7 @@ def get_scaling_factors(window_title):
     screen_height = win32api.GetSystemMetrics(1)
     scale_x = window_width / screen_width
     scale_y = window_height / screen_height
-
+    # print("screen_width",screen_width,"screen_height",screen_height,"scale_x",scale_x,"scale_y",scale_y)
     return scale_x, scale_y
 
 
@@ -38,12 +38,15 @@ def calculate_target_coordinates(window_title, x_original_value, y_original_valu
     target_x = window_left + int(x_original_value * scale_x)
     target_y = window_top + int(y_original_value * scale_y)
 
-    print("target_x:", target_x, "target_y:", target_y)
+    # print("target_x:", target_x, "target_y:", target_y)
 
     return target_x, target_y
 
 
-def apply_window_scale(target_window_pianyi, target_x, scale_y):
+# 有buff的时候会向下移动7像素点，分辨率为720时自适应为向下移动4像素点
+def apply_window_scale(target_window_pianyi, window_title):
+    scale_x, scale_y = get_scaling_factors(window_title)
     target_window_pianyi_out = target_window_pianyi * scale_y
+    # print("target_window_pianyi_out = ", target_window_pianyi_out, "scale_y:", scale_y)
     return target_window_pianyi_out
 
