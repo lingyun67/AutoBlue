@@ -3,7 +3,7 @@
 ## 概要
 AutoBlueは、色ブロックの検出、仮想ゲームパッド入力、仮想マウス入力などのサードパーティライブラリを使用した、通常のオートプレイスクリプトです。
 
-[簡体字中国語](README.zh-CN.md) ｜ [英語](README.md)
+[简体中文](README.zh-CN.md) | [English](README.md) | [日本語](README.jp.md)
 
 ## 使用の開始
 
