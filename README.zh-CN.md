@@ -64,7 +64,7 @@ teamMatchingEnabled = 1
 
 现在可以运行本脚本。
 
-```python
+```
 py main.py
 ```
 
