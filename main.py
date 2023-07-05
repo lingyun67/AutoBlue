@@ -9,6 +9,8 @@ import configparser
 from PIL import ImageGrab
 from window_utils import calculate_target_coordinates
 from window_utils import apply_window_scale
+from skill_cycle import *
+
 
 art = """
 ______          _     ______                 _       _
@@ -41,7 +43,7 @@ def colors_approx_equal(color1, color2, tolerance):
 
 
 def simulate_combat(gamepad, target_x, target_y, target_color, hp_target_x, hp_target_y, hp_color, color_tolerance, timeout,
-                    target_window_pianyi_original, window_title, next_target_enabled):
+                    target_window_pianyi_original, window_title, next_target_enabled, skill_config):
     # 模拟战斗的方法
     logging.info("开始战斗")
 
@@ -58,9 +60,9 @@ def simulate_combat(gamepad, target_x, target_y, target_color, hp_target_x, hp_t
             and (not colors_approx_equal(get_pixel_color(hp_target_x, hp_target_y), hp_color, color_tolerance - 4)):
         elapsed_time = time.time() - start_time  # 计算已经过去的时间
         if elapsed_time > timeout:  # 如果已经过去的时间超过timeout秒
-            find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance, next_target_enabled)  # 强制寻找敌人
+            find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance, next_target_enabled, skill_config)  # 强制寻找敌人
             break
-        kill(gamepad, next_target_enabled)
+        kill(gamepad, next_target_enabled, skill_config)
 
 
 def find_enemy(gamepad, target_x, target_y, target_color, color_tolerance,
@@ -96,15 +98,15 @@ def find_enemy(gamepad, target_x, target_y, target_color, color_tolerance,
         time.sleep(0.5)
 
 
-def simulate_combat_bug(gamepad, next_target_enabled):
+def simulate_combat_bug(gamepad, next_target_enabled, skill_config):
     # 模拟战斗的方法
     logging.info("开始bug模式下的战斗")
     gamepad.right_joystick(x_value=0, y_value=0)
     gamepad.update()
-    kill(gamepad, next_target_enabled)
+    kill(gamepad, next_target_enabled, skill_config)
 
 
-def find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance, next_target_enabled):
+def find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance, next_target_enabled, skill_config):
     # 寻找敌方怪物的方法
     logging.info("卡死模式下开始寻找敌怪")
 
@@ -125,7 +127,7 @@ def find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance, n
         gamepad.update()
         time.sleep(0.3)
 
-        simulate_combat_bug(gamepad, next_target_enabled)  # 尝试清除新的怪物
+        simulate_combat_bug(gamepad, next_target_enabled, skill_config)  # 尝试清除新的怪物
 
         gamepad.right_joystick(x_value=12000, y_value=0)
         gamepad.update()
@@ -196,17 +198,31 @@ def autoTeamMatching(window_title):
 
 
 # 战斗循环相关：
-def kill(gamepad, next_target_enabled):
+def kill(gamepad, next_target_enabled, skill_config):
     # logging.info("开始技能循环")
-    ping_A(gamepad)
-    skill1(gamepad)
-    next_target(next_target_enabled)
-    ping_A(gamepad)
-    skill2(gamepad)
-    next_target(next_target_enabled)
-    ping_A(gamepad)
-    skill4(gamepad)
-    next_target(next_target_enabled)
+    # 根据配置信息的值调用相应的方法
+    if skill_config == 1:
+        method1(gamepad, next_target_enabled)
+    elif skill_config == 2:
+        method2(gamepad, next_target_enabled)
+    # elif skill_config == 3:
+    #     method3(gamepad, next_target_enabled)
+    # elif skill_config == 4:
+    #     method4(gamepad, next_target_enabled)
+    # elif skill_config == 5:
+    #     method5()
+    # elif skill_config == 6:
+    #     method6()
+    # elif skill_config == 7:
+    #     method7()
+    # elif skill_config == 8:
+    #     method8()
+    # elif skill_config == 9:
+    #     method9()
+    # elif skill_config == 10:
+    #     method10()
+    else:
+        logging.error("无效的技能循环配置信息")
 
 
 def next_target(next_target_enabled):  # 滚轮向下
@@ -395,6 +411,7 @@ def main():
     teamMatchingEnabled = int(config['General']['teamMatchingEnabled'])
     auto_health = int(config['General']['auto_health'])
     next_target_enabled = int(config['General']['next_target_enabled'])
+    skill_config = int(config['General']['skill_config'])
 
     # 定义窗口标题和原始坐标值
     window_title = "BLUE PROTOCOL  "  # 窗口标题
@@ -429,7 +446,7 @@ def main():
                                            target_color, color_tolerance):
                 logging.info("匹配到相关颜色")
                 simulate_combat(gamepad, target_x, target_y, target_color, hp_target_x, hp_target_y, hp_color, color_tolerance,
-                                timeout, target_window_pianyi_original, window_title, next_target_enabled)
+                                timeout, target_window_pianyi_original, window_title, next_target_enabled, skill_config)
                 logging.info("战斗结束")
             else:
                 logging.info("颜色不匹配")
