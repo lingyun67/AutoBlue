@@ -41,7 +41,7 @@ def colors_approx_equal(color1, color2, tolerance):
 
 
 def simulate_combat(gamepad, target_x, target_y, target_color, hp_target_x, hp_target_y, hp_color, color_tolerance, timeout,
-                    target_window_pianyi_original, window_title):
+                    target_window_pianyi_original, window_title, next_target_enabled):
     # 模拟战斗的方法
     logging.info("开始战斗")
 
@@ -58,9 +58,9 @@ def simulate_combat(gamepad, target_x, target_y, target_color, hp_target_x, hp_t
             and (not colors_approx_equal(get_pixel_color(hp_target_x, hp_target_y), hp_color, color_tolerance - 4)):
         elapsed_time = time.time() - start_time  # 计算已经过去的时间
         if elapsed_time > timeout:  # 如果已经过去的时间超过timeout秒
-            find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance)  # 强制寻找敌人
+            find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance, next_target_enabled)  # 强制寻找敌人
             break
-        kill(gamepad)
+        kill(gamepad, next_target_enabled)
 
 
 def find_enemy(gamepad, target_x, target_y, target_color, color_tolerance,
@@ -96,15 +96,15 @@ def find_enemy(gamepad, target_x, target_y, target_color, color_tolerance,
         time.sleep(0.5)
 
 
-def simulate_combat_bug(gamepad):
+def simulate_combat_bug(gamepad, next_target_enabled):
     # 模拟战斗的方法
     logging.info("开始bug模式下的战斗")
     gamepad.right_joystick(x_value=0, y_value=0)
     gamepad.update()
-    kill(gamepad)
+    kill(gamepad, next_target_enabled)
 
 
-def find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance):
+def find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance, next_target_enabled):
     # 寻找敌方怪物的方法
     logging.info("卡死模式下开始寻找敌怪")
 
@@ -125,7 +125,7 @@ def find_enemy_bug(gamepad, target_x, target_y, target_color, color_tolerance):
         gamepad.update()
         time.sleep(0.3)
 
-        simulate_combat_bug(gamepad)  # 尝试清除新的怪物
+        simulate_combat_bug(gamepad, next_target_enabled)  # 尝试清除新的怪物
 
         gamepad.right_joystick(x_value=12000, y_value=0)
         gamepad.update()
@@ -179,7 +179,7 @@ def autoTeamMatching(window_title):
     matchTeammateButtonY = 192
     matchTeammateButtonX_target, matchTeammateButtonY_target = calculate_target_coordinates(window_title, matchTeammateButtonX, matchTeammateButtonY)
     # 按下ESC键
-    pyautogui.press('esc')
+    pyautogui.press('P')
     # 等待1秒
     time.sleep(1)
     # 移动鼠标到目标坐标
@@ -191,27 +191,28 @@ def autoTeamMatching(window_title):
     # 等待0.1秒
     time.sleep(0.1)
     # 再次按下ESC键
-    pyautogui.press('esc')
+    pyautogui.press('P')
     time.sleep(3)
 
 
 # 战斗循环相关：
-def kill(gamepad):
+def kill(gamepad, next_target_enabled):
     # logging.info("开始技能循环")
     ping_A(gamepad)
     skill1(gamepad)
-    next_target()
+    next_target(next_target_enabled)
     ping_A(gamepad)
     skill2(gamepad)
-    next_target()
+    next_target(next_target_enabled)
     ping_A(gamepad)
     skill4(gamepad)
-    next_target()
+    next_target(next_target_enabled)
 
 
-def next_target():  # 滚轮向下
+def next_target(next_target_enabled):  # 滚轮向下
     # 万代这个傻逼设置太狗屎了，手柄居然不能切换目标？？？
-    pyautogui.scroll(-1)
+    if next_target_enabled:
+        pyautogui.scroll(-1)
 
 
 # 平A 手柄按B
@@ -392,6 +393,8 @@ def main():
     target_window_pianyi_original = int(config['General']['target_window_pianyi_original'])  # buff导致血条移动像素数
     autoRotateEnemySearch = int(config['General']['autoRotateEnemySearch'])
     teamMatchingEnabled = int(config['General']['teamMatchingEnabled'])
+    auto_health = int(config['General']['auto_health'])
+    next_target_enabled = int(config['General']['next_target_enabled'])
 
     # 定义窗口标题和原始坐标值
     window_title = "BLUE PROTOCOL  "  # 窗口标题
@@ -405,7 +408,8 @@ def main():
         hp_target_x, hp_target_y = calculate_target_coordinates(window_title, hp_x, hp_y)
         matchingStatusX_target, matchingStatusY_target = calculate_target_coordinates(window_title, matchingStatusX, matchingStatusY)
         teammateHealthBarX_target, teammateHealthBarY_target = calculate_target_coordinates(window_title, teammateHealthBarX, teammateHealthBarY)
-        if colors_approx_equal(get_pixel_color(hp_target_x, hp_target_y), hp_color, color_tolerance - 4):  # 降低容差
+        # 血量回复判断
+        if colors_approx_equal(get_pixel_color(hp_target_x, hp_target_y), hp_color, color_tolerance - 4) and auto_health:  # 降低容差
             logging.info("匹配到低于目标血量")
             regain_health(gamepad, hp_target_x, hp_target_y, hp_color, color_tolerance)
         # 启动了(自动匹配)且(没有队友或没在匹配队友状态)
@@ -425,7 +429,7 @@ def main():
                                            target_color, color_tolerance):
                 logging.info("匹配到相关颜色")
                 simulate_combat(gamepad, target_x, target_y, target_color, hp_target_x, hp_target_y, hp_color, color_tolerance,
-                                timeout, target_window_pianyi_original, window_title)
+                                timeout, target_window_pianyi_original, window_title, next_target_enabled)
                 logging.info("战斗结束")
             else:
                 logging.info("颜色不匹配")

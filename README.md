@@ -46,7 +46,7 @@ By default, the third skill (3) and the second combat illusion (2) are used as m
 
 Now you can run the script:
 
-```python
+```
 py main.py
 ```
 
