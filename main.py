@@ -174,6 +174,7 @@ def reset_viewpoint(gamepad):
     gamepad.update()
     time.sleep(0.1)
 
+
 # 打开匹配队友的开关
 def autoTeamMatching(window_title):
     # ESC - 移动鼠标 - 点击 - ESC
@@ -403,6 +404,8 @@ def main():
     matchingStatusColor = tuple(map(int, config['General']['matchingStatusColor'].split(',')))
     teammateHealthBarX = int(config['General']['teammateHealthBarX'])
     teammateHealthBarY = int(config['General']['teammateHealthBarY'])
+    teammateHealthBarX_end = int(config['General']['teammateHealthBarX_end'])
+    teammateHealthBarY_end = int(config['General']['teammateHealthBarY_end'])
     teammateHealthBarColor = tuple(map(int, config['General']['teammateHealthBarColor'].split(',')))
     color_tolerance = int(config['General']['color_tolerance'])  # 颜色误差容忍范围
     timeout = int(config['General']['timeout'])  # 战斗超时时间
@@ -425,12 +428,13 @@ def main():
         hp_target_x, hp_target_y = calculate_target_coordinates(window_title, hp_x, hp_y)
         matchingStatusX_target, matchingStatusY_target = calculate_target_coordinates(window_title, matchingStatusX, matchingStatusY)
         teammateHealthBarX_target, teammateHealthBarY_target = calculate_target_coordinates(window_title, teammateHealthBarX, teammateHealthBarY)
+        teammateHealthBarX_end_target, teammateHealthBarY_end_target = calculate_target_coordinates(window_title, teammateHealthBarX_end, teammateHealthBarY_end)
         # 血量回复判断
         if colors_approx_equal(get_pixel_color(hp_target_x, hp_target_y), hp_color, color_tolerance - 4) and auto_health:  # 降低容差
             logging.info("匹配到低于目标血量")
             regain_health(gamepad, hp_target_x, hp_target_y, hp_color, color_tolerance)
-        # 启动了(自动匹配)且(没有队友或没在匹配队友状态)
-        if teamMatchingEnabled == 1 and not( colors_approx_equal(get_pixel_color(teammateHealthBarX_target, teammateHealthBarY_target), teammateHealthBarColor, color_tolerance - 4) or colors_approx_equal(get_pixel_color(matchingStatusX_target, matchingStatusY_target), matchingStatusColor, color_tolerance)):
+        # 启动了(自动匹配)且(没有队友或没在匹配队友状态)且(小队没有满员)
+        if teamMatchingEnabled == 1 and not(colors_approx_equal(get_pixel_color(teammateHealthBarX_target, teammateHealthBarY_target), teammateHealthBarColor, color_tolerance - 4) or colors_approx_equal(get_pixel_color(matchingStatusX_target, matchingStatusY_target), matchingStatusColor, color_tolerance)) and not(colors_approx_equal(get_pixel_color(teammateHealthBarX_target, teammateHealthBarY_target), teammateHealthBarColor, color_tolerance - 4) and colors_approx_equal(get_pixel_color(teammateHealthBarX_end_target, teammateHealthBarY_end_target), teammateHealthBarColor, color_tolerance - 4)):
             # print(teammateHealthBarX_target,teammateHealthBarY_target,teammateHealthBarColor,matchingStatusX_target, matchingStatusY_target, matchingStatusColor)
             autoTeamMatching(window_title)
         else:
