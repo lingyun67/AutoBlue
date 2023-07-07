@@ -42,6 +42,9 @@ matchingStatusColor = 0, 208, 255
 # 第一名队友血条坐标
 teammateHealthBarX = 106
 teammateHealthBarY = 822
+# 最后一名队友血条坐标
+teammateHealthBarX_end = 106
+teammateHealthBarY_end = 974
 # 队友血条颜色
 teammateHealthBarColor = 41, 255, 167
 # 颜色误差容忍范围
@@ -54,6 +57,12 @@ target_window_pianyi_original = 7
 autoRotateEnemySearch = 1
 # 是否自动匹配同地图队友
 teamMatchingEnabled = 1
+# 弓箭手是否自动回复血量,后面版本会更新为全职业血量回复
+auto_health = 1
+# 是否自动切换到下一个目标，若打开则会输入鼠标滚轮的模拟信号
+next_target_enabled = 1
+# 技能循环选择，1为弓箭手
+skill_config = 1
 ```
 
 将你刚刚获取到的坐标，如821,61分别修改到x_original_value与y_original_value中。
