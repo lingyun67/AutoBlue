@@ -17,6 +17,8 @@ def method1(gamepad, next_target_enabled):
     # logging.info("开始技能循环")
     ping_A(gamepad)
     skill1(gamepad)
+    skillbt(gamepad)
+    skillb1(gamepad)
     next_target(next_target_enabled)
     ping_A(gamepad)
     skill2(gamepad)

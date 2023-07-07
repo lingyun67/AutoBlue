@@ -1,116 +1,131 @@
 # AutoBlue
 
-A simple auto-farming script that utilizes third-party libraries for color detection, simulated joystick input, and simulated mouse input.
+一个普普通通的挂机脚本，使用了色块识别、模拟手柄输入、模拟鼠标输入的第三方库
 
-[简体中文](README.zh-CN.md) | [English](README.md) | [日本語](README.jp.md)
+## 开始使用
 
-## Getting Started
-
-Download this project to your local machine and navigate to the project folder. Then run the following command:
+将本项目下载到本地，然后在项目文件夹运行：
 
 ```
 pip install -r requirements.txt
 ```
 
-This will install the required third-party libraries.
+这将会安装所需要的第三方库
 
-Before using it for the first time, you need to perform local adaptation.
+第一次使用之前，你需要进行本机适配。
 
-You need to obtain the coordinates of the health bar on your game client. Download the Grab Tool from [https://wwuh.lanzout.com/iAItC115cv2d]. After opening the Grab Tool, target any enemy and position the mouse cursor on the far left of its health bar, leaving a few pixels from the left edge and trying to align the cursor vertically in the center of the health bar. Then press Ctrl+Alt+1, and the Grab Tool will display the coordinates of the selected position.
+你需要获取你的客户端的血条的坐标，下载抓抓工具
+[https://wwuh.lanzout.com/iAItC115cv2d]
+打开抓抓工具之后，随便找一个怪，将鼠标瞄准在它血条的最左边但再往右留几格像素，并且要求瞄准的那颗像素点尽量在血条的垂直中心。此时按下ctrl+alt+1，抓抓工具会显示你获取到的这个位置的坐标。
 
-Repeat the same process to obtain the coordinates of your own health bar, which should be positioned around 80% from the left side of the health bar (not applicable for archers). 
+再用同样方法获取你自己的血条的坐标，此时不是最左边了，大概在你血条80%的位置即可。（不使用弓箭手可以不设置血条坐标，因为设了也没用）
 
-Open the `config.ini` file, which has the following default values:
+打开config.ini，该文件的默认值如下：
 
-```ini
+```
 [General]
-# Color of the current target
+# 敌人 当前目标颜色，计算时会约等于该rgb值，计算结果受color_tolerance数值影响
 target_color = 247, 1, 0
-# Color of the health bar background
+# 血条的背景板的颜色
 hp_color = 51, 51, 51
+# 目标敌人血条最左侧坐标
 x_original_value = 821
 y_original_value = 61
+# 玩家血条坐标，推荐设置为80%处
 hp_x = 831
 hp_y = 1045
-# Color tolerance range
+# 匹配标识坐标
+matchingStatusX = 1737
+matchingStatusY = 12
+# 匹配状态的颜色
+matchingStatusColor = 0, 208, 255
+# 第一名队友血条坐标
+teammateHealthBarX = 106
+teammateHealthBarY = 822
+# 队友血条颜色
+teammateHealthBarColor = 41, 255, 167
+# 颜色误差容忍范围
 color_tolerance = 10
-# Combat timeout
+# 战斗超时时间
 timeout = 30
-# Offset caused by buffs moving the health bar
+# buff导致血条移动像素数
 target_window_pianyi_original = 7
+# 是否360°旋转视角
+autoRotateEnemySearch = 1
+# 是否自动匹配同地图队友
+teamMatchingEnabled = 1
 ```
 
-Replace the values `x_original_value` and `y_original_value` with the coordinates you obtained earlier (e.g., 821, 61).
+将你刚刚获取到的坐标，如821,61分别修改到x_original_value与y_original_value中。
 
-By default, the third skill (3) and the second combat illusion (2) are used as means of life recovery. If you don't want to change the code, please adjust the positions of the skills in your game.
+默认情况下，第三个3主动技能和第二个战斗幻想和右键作为生命恢复手段，如果不想更改代码请更改游戏内技能位置。
 
-Now you can run the script:
+现在可以运行本脚本。
 
 ```
 py main.py
 ```
 
-## Script Logic
+## 脚本逻辑
 
-The workflow is as follows: start -> reset the current perspective -> rotate and search for targets -> lock onto a target -> enter skill loop -> target dies -> search for a new target.
+- 工作流程是：启动-重置当前视角-旋转搜索目标-锁定目标-进入技能循环-目标死亡-再次搜索目标
+- target坐标组所指向的坐标颜色若约等于红色，则判定为当前正在锁定目标，进入战斗循环，反之则进入寻敌循环。
+- hp坐标组所指向的坐标颜色若等于玩家血条的背景板的颜色，则强制进入生命恢复循环。
+- 因锁定目标可能会发生锁定丢失的情况，现将会在设定的时间经过后强制搜索新的目标
+- 旋转搜索时可能因为视角过于诡异导致转了很多圈也搜不到敌人，现将会在设定的时间经过之后重置视角
+- 血量过低的时候自动进入血量回复循环（仅限弓箭手）
+- 使用vgamepad库进行手柄模拟输入，使用pyautogui库进行鼠标滚轮的输入
+- 只要按照16:9的比例缩放窗口，无论窗口放在任意位置，在经过最多30s的时间后都能重新定位血条位置
+- 启动了(自动匹配)且(没有队友或没在匹配队友状态)的情况下会ESC-移动鼠标-点击-ESC以匹配队友
+- 按照配置读取技能循环
 
-If the color at the coordinates indicated by the `target_color` matches red, it is considered that the current target is locked, and the script enters the combat loop. Otherwise, it enters the search loop.
+## 注意事项
 
-If the color at the coordinates indicated by the `hp_color` matches the background color of the player's health bar, it forcibly enters the life recovery loop.
+- 默认循环下会向下滚鼠标滚轮，因为万代不允许使用手柄进行目标切换
+- 在“已连接任意一个手柄”的情况下开启脚本会导致脚本无法生效，因为游戏只能被一个手柄控制
+- 自动匹配功能启动的情况下请不要遮挡队友的血条和右上角的匹配状态显示
+- 你可以选择关闭自动旋转视角以搜索敌人，"或许"会提升效率（
+- 多项功能在配置页面可开关
 
-To account for the possibility of losing the lock on the target, the script will force a new target search after a specified time.
+## 自定义设置
 
-To account for the possibility of searching in unusual perspectives without finding any enemies, the script will reset the perspective after a specified time.
+待补充
 
-When the health is low, it automatically enters the life recovery loop (only applicable for archers).
+## 挂机地点推荐
 
-The script uses the `vgamepad` library for simulated joystick input and the `pyautogui` library for mouse wheel input.
+### 1-5级：在第一张野外地图随便挂挂
+其实直接跟着主线一小会就5级了，然后就可以进自由探索了
 
-As long as the game window is scaled to a 16:9 aspect ratio, it can be placed anywhere on the screen, and the health bar position will be repositioned within 30 seconds.
-
-## Notes
-
-- By default, the script scrolls the mouse wheel downward because Bandai does not allow target switching using a gamepad.
-- If a gamepad is already connected, the script will not work because the game only allows control from a single gamepad.
-
-## Custom Settings
-
-To be added.
-
-
-
-## Recommended Farming Locations
-
-### Levels 1-5: Anywhere on the first wilderness map
-Simply follow the main storyline for a short while, and you'll reach level 5. After that, you can enter Free Exploration.
-
-### Levels 3-14: Entrance of Free Exploration
-Invincible spot with no damage taken.
+### 3-14级 自由探索门口
+无敌点位，不会受到伤害
 ![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/3-14.png)
 
-### Levels 11-21: Resting Place of Pilgrims
-You can stand on a rock here and attack wolves without taking damage. However, Goblin Camp might be more efficient for leveling up.
+### 11-21级 巡礼者的休息地
+这里找块石头可以无伤打狼，效率估计不如哥布林营地
 ![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/11-21.png)
 
-### Levels 14-22: Goblin Camp
-There is no safe spot here, but there are many enemies. While it might be annoying to deal with elite mobs, you can focus on leveling up, and once they die, they won't interfere anymore.
+### 14-22级 哥布林营地
+没啥能避免伤害的地方，但是人相当多，所以其实没啥，但是会刷恶名精英，为了练级而来自然会被这个紫名的玩意卡住视角，等他死了就没影响了
 ![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/14-22.png)
 
-## Implementation of Complex Functions
+### 28-38级 
 
-Method `get_target_health_bar_coordinates`:
+## 较复杂功能实现
 
-If there is a red pixel at coordinates (821, 61) on the screen in 1080p full-screen mode, the variables `x_original_value` and `y_original_value` represent those coordinates.
+方法get_target_health_bar_coordinates：
 
-When the `get_target_health_bar_coordinates` method is called, it invokes the existing `get_window_coordinates` method, which returns four values: `window_left`, `window_top`, `window_width`, and `window_height`. These values represent the x-coordinate of the window's top-left corner, the y-coordinate of the window's top-left corner, the width of the window, and the height of the window, respectively.
+如果在1080p的全屏模式下有一个红色的像素在821,61的坐标，这个坐标的xy轴的变量名为x_original_value与y_original_value。
 
-After obtaining these four values, the `get_target_health_bar_coordinates` method divides the window width by the screen width and the window height by the screen height to obtain the scaling factors.
+当调用这个get_target_health_bar_coordinates方法的时候会调用现有的get_window_coordinates方法，get_window_coordinates会返回窗口的四个数据：window_left, window_top, window_width, window_height，这四个数据代表窗口左上角的 x 坐标、窗口左上角的 y 坐标、窗口的宽度和窗口的高度。
 
-Then, it multiplies the variables `x_original_value` and `y_original_value` by the scaling factors and adds them to the coordinates of the scaled window's top-left corner, thus repositioning the red pixel.
+get_target_health_bar_coordinates方法在获得了这四个数据之后，会用窗口的宽度除以屏幕的宽度，用窗口的高度除以屏幕的高度，这样就得到了缩小的比例。
 
-Later, the `get_target_health_bar_coordinates` method is split into the `get_scaling_factors` and `calculate_target_coordinates` methods. The former is used to obtain the scaling factors, while the latter is used to calculate the specific coordinates.
+然后再用红色的像素之前的名为x_original_value与y_original_value的坐标变量乘以该比例，再加到缩小后的窗口的左上角的坐标上，这样就完成了该红色像素点的重新定位。
 
-## Changelog
+后续：get_target_health_bar_coordinates方法被拆分为get_scaling_factors方法与calculate_target_coordinates方法，前者用来获取比例，后者用来获取具体坐标
 
-- v0.1 Attempted using AutoHotkey: detected color at specified position (target health bar) and performed auto-attack (auto-click) and mouse wheel scroll to switch targets and attack all nearby enemies.
-- v0.2 Switched to Python due to limitations in rotating the perspective. Utilized `vgamepad` library for simulated joystick input and `pyautogui` library for mouse wheel input.
+
+## 更新日志
+
+- v0.1 使用按键精灵进行尝试 识别指定位置(目标血条)的颜色 如果有血条 自动按下平a 自动滚轮向下滚1格来实现切怪，以攻击同屏幕所有小怪
+- v0.2 因不能旋转视角遂改用python，使用vgamepad库进行手柄模拟输入，使用pyautogui库进行鼠标滚轮的输入
