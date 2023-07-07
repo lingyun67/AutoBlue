@@ -107,17 +107,19 @@ py main.py
 
 ### 3-14级 自由探索门口
 无敌点位，不会受到伤害
-![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/3-14.png)
+![img](img/3-14.png)
 
 ### 11-21级 巡礼者的休息地
 这里找块石头可以无伤打狼，效率估计不如哥布林营地
-![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/11-21.png)
+![img](img/11-21.png)
 
 ### 14-22级 哥布林营地
 没啥能避免伤害的地方，但是人相当多，所以其实没啥，但是会刷恶名精英，为了练级而来自然会被这个紫名的玩意卡住视角，等他死了就没影响了
-![img](https://raw.githubusercontent.com/lingyun67/AutoBlue/main/img/14-22.png)
+![img](img/14-22.png)
 
-### 28-38级 
+### 24-33级 沙漠的山贼营地
+总是有人在这里刷，站在那开刷就行了
+![img](img/24-33.png)
 
 ## 较复杂功能实现
 
